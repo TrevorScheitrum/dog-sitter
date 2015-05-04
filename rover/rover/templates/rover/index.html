@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+  
+	<script>
+	var rank = 0;
+	var value = 0;
+		$(function() {
+		  $( "#slider" ).slider({
+			  step: 1,
+			  min: 0,
+			  max: 5,
+			  
+			  change: function( event, ui ) {
+				  value = $("#slider").slider("option","value");
+				  $("#slider").find(".ui-slider-handle").text(value);
+				  
+				  $(".profileContainer").each(function( index ) {
+					  rank = parseFloat($(this).find(".rank").text());
+					  
+					  if(rank < value){
+						  $(this).hide();
+					  }else{
+						  $(this).show();
+					  }
+				  });
+			  },
+			  slide: function() {
+			        value = $("#slider").slider("option","value");
+			        $("#slider").find(".ui-slider-handle").text(value);
+			  },
+		  });
+		});
+	</script>
+	
+	
+	<div id="slider"></div>
+	<br />
+	<br />
+	
+	<div class="profileContainer">
+	{% for profile in profiles %}
+		<div class="profile">{{profile.user.first_name}} - <img width="50" height="50" src="{{profile.image}}"> - Rank: <span class="rank">{{profile.rank}}</span></div>
+		<br />
+		<br />
+	{% endfor %}
+	</div>
+
+{% endblock %}
