@@ -4,47 +4,71 @@
 {% block content %}
   
 	<script>
-	var rank = 0;
-	var value = 0;
-		$(function() {
-		  $( "#slider" ).slider({
-			  step: 1,
-			  min: 0,
-			  max: 5,
-			  
-			  change: function( event, ui ) {
+		var rank = 0;
+		var value = 0;
+		
+		
+			function sliderChange(event, ui) {
 				  value = $("#slider").slider("option","value");
 				  $("#slider").find(".ui-slider-handle").text(value);
 				  
-				  $(".profileContainer").each(function( index ) {
-					  rank = parseFloat($(this).find(".rank").text());
-					  
+				  $(".profile-container").each(function( index ) {
+					  rank = parseFloat($(this).find(".rating").text());
 					  if(rank < value){
 						  $(this).hide();
 					  }else{
 						  $(this).show();
 					  }
 				  });
-			  },
-			  slide: function() {
-			        value = $("#slider").slider("option","value");
-			        $("#slider").find(".ui-slider-handle").text(value);
-			  },
-		  });
-		});
+			}
+		
+			$(function() {
+			  $( "#slider" ).slider({
+				  step: 1,
+				  min: 0,
+				  max: 10,
+				  change: sliderChange,
+				  slide: sliderChange,
+			  });
+			});
+			
+			$( document ).ready(function() {
+				$("#slider").slider('value',0);
+				value = $("#slider").slider("option","value");
+		        $("#slider").find(".ui-slider-handle").text(value);
+				});		
 	</script>
 	
+	<label id="slider_label">Show me sitters with ratings above:<div id="slider"></div></label>
 	
-	<div id="slider"></div>
-	<br />
-	<br />
 	
-	<div class="profileContainer">
+	<ul class="list-group">
+
 	{% for profile in profiles %}
-		<div class="profile">{{profile.user.first_name}} - <img width="50" height="50" src="{{profile.image}}"> - Rank: <span class="rank">{{profile.rank}}</span></div>
-		<br />
-		<br />
+		<li class="profile-container">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="profile-img">
+						<div class="circular" style="background-image:url('{{profile.image}}')"></div>	
+					</div>
+					<div class="profile-name">
+						<p>
+							<strong>{{profile.first_name}}</strong>
+						</p>
+					</div>
+					<div class="profile-rating">
+						<p>
+							Rating: <span class="rating">{{profile.rating|floatformat}}</span>
+						</p>
+					</div>
+					<div class="profile-text">
+						<p>{{profile.text|safe|truncatewords:12}}</p>
+					</div>
+				</div>
+			</div>
+		</li> 
 	{% endfor %}
-	</div>
+
+	</ul> 
 
 {% endblock %}

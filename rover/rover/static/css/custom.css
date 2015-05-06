@@ -1,0 +1,32 @@
+.list-group li {
+    list-style: none;
+}
+.profile-name, .profile-img, .profile-rank .profile-text {
+    float: left;
+    margin: 0 10px;
+}
+
+
+#slider{
+	margin-bottom:100px;
+	width:200px;
+	float:right;
+	margin-left:25px;
+}
+
+#slider_label{
+}
+
+.circular {
+	width: 150px;
+	height: 150px;
+	background-repeat:no-repeat;
+	background-size: 150px 150px;
+	border-radius: 75px;
+	-webkit-border-radius: 75px;
+	-moz-border-radius: 75px;
+	box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+	-webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+	-moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+	}
+

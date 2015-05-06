@@ -10,8 +10,8 @@ from rover.utils import *
 
 
 
-def createDataModel(row):
-    rating = row[0]
+def create_data_model(row):
+    rating = int(row[0])
     sitter_image = row[1]
     end_date = row[2]
     text = row[3]
@@ -21,34 +21,44 @@ def createDataModel(row):
     owner = row[7]
     start_date = row[8]
     
+    
+    # Get unique user id from salvaged image urls
     sitter_id = sitter_image[sitter_image.index("=")+1:]
     owner_id = owner_image[owner_image.index("=")+1:]
     
-    sitterScore = calculateSitterScore(sitter)
+    sitter_score = calculate_sitter_score(sitter)
     
+    
+    #create an owner if it doesn't exist
     if not User.objects.filter(pk=owner_id).exists():
-        owner, ownerCreated = User.objects.get_or_create(pk=owner_id, username=owner_id, first_name=str.split(owner)[0])
+        owner, owner_created = User.objects.get_or_create(pk=owner_id, username=owner_id, first_name=owner)
         owner.profile = Profile(type=1, image=owner_image)
         owner.profile.save()
     
+    #create a sitter if it doesn't exist
     if not User.objects.filter(pk=sitter_id).exists():
-        sitter, sitterCreated = User.objects.get_or_create(pk=sitter_id, username=sitter_id, first_name=str.split(sitter)[0])
-        sitter.profile = Profile(type=2,text=text, rank=sitterScore, image=sitter_image)
+        sitter, sitter_created = User.objects.get_or_create(pk=sitter_id, username=sitter_id, first_name=sitter)
+        sitter.profile = Profile(type=2,text=text, rank=sitter_score, image=sitter_image)
         sitter.profile.save()
-             
+    
     sitter = User.objects.get(pk=sitter_id)
     owner = User.objects.get(pk=owner_id)
     
+    
+    #Get multiple dog name from one line
     dogs = dogs.split('|')
-    dogList = []
+    dog_list = []
+    
+    #Create new dogs for each dogname salvaged
     for dog in dogs:
-       newDog = Dog(name=dog, owner=owner) 
-       newDog.save()
-       dogList.append(newDog)
-       
-    newStay = Stay(sitter_id=sitter_id,rating=rating,start_date=start_date,end_date=end_date)
+       new_dog = Dog(name=dog, owner=owner) 
+       new_dog.save()
+       dog_list.append(new_dog)
+    
+    #Create 'stays' for each dog
+    newStay = Stay(sitter_id=sitter_id,profile=sitter.profile,rating=rating,start_date=start_date,end_date=end_date)
     newStay.save()
-    newStay.dogs.add(*dogList)
+    newStay.dogs.add(*dog_list)
     newStay.save()
 
 
@@ -57,7 +67,7 @@ def import_data(apps, schema_editor):
         datareader = csv.reader(csvfile, delimiter=b',')
         datareader.next()
         for row in datareader:
-            createDataModel(row)
+            create_data_model(row)
 
 
 class Migration(migrations.Migration):
